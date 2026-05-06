@@ -5,7 +5,6 @@
 # 4. Update birthdays.csv to contain today's month and day.
 # See the solution video in the 100 Days of Python Course for explainations.
 
-
 from datetime import datetime
 import pandas
 import random
