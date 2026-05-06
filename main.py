@@ -43,7 +43,7 @@ for condition_code in forecast_codes:
 if will_rain: # This is a shortened version of if will_rain == True:
     my_email = os.environ.get("MY_EMAIL")
     my_other_email = os.environ.get("SECOND_EMAIL")
-    password = os.environ.get("APP_PASSWORD")
+    password = os.environ.get("MY_PASSWORD")
 
     with smtplib.SMTP("smtp.gmail.com") as connection:  # Using the 'with' keyword ensures the connection
         # is closed off automatically (after the email is sent).
