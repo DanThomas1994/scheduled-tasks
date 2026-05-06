@@ -1,37 +1,56 @@
-# To run and test the code you need to update 4 places:
-# 1. Change MY_EMAIL/MY_PASSWORD to your own details.
-# 2. Go to your email provider and make it allow less secure apps.
-# 3. Update the SMTP ADDRESS to match your email provider.
-# 4. Update birthdays.csv to contain today's month and day.
-# See the solution video in the 100 Days of Python Course for explainations.
-
-from datetime import datetime
-import pandas
-import random
+import requests
 import smtplib
 import os
 
-# import os and use it to get the Github repository secrets
-MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
+api_key = os.environ.get("API_KEY") # os.environ.get("API_KEY"). This is a way of hiding certain values.
+# "e6240e3967e6413e5541626830d3f3f3" # API key saved as a string.
+open_weather_map_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
 
-today = datetime.now()
-today_tuple = (today.month, today.day)
+# Latitude and longitude for Munich:
+Latitude = 48.135124 # os.environ.get("LATITUDE") #This is a way of hiding certain values.
+Longitude = 11.581981
 
-data = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"])                  : data_row for (index, data_row) in data.iterrows()}
-if today_tuple in birthdays_dict:
-    birthday_person = birthdays_dict[today_tuple]
-    file_path = f"letter_templates/letter_{random.randint(1, 3)}.txt"
-    with open(file_path) as letter_file:
-        contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person["name"])
+weather_parameters = {
+    "lat": Latitude,
+"lon": Longitude,
+    "appid": api_key,
+    "cnt": 4 # A count of 4; shows only the first 4 forecasts.
+}
 
-    with smtplib.SMTP("YOUR EMAIL PROVIDER SMTP SERVER ADDRESS") as connection:
-        connection.starttls()
-        connection.login(MY_EMAIL, MY_PASSWORD)
+response = requests.get(url=open_weather_map_endpoint, params=weather_parameters)
+# print(response.status_code) # 200 means it worked!
+response.raise_for_status() # Raise an exception if there is a problem.
+# print(response.json()) # Get the data from the website in json format.
+weather_data = response.json()
+# print(weather_data["list"])
+
+# first_forecast = weather_data["list"][0]["weather"]
+# print(first_forecast)
+# first_forecast_code = first_forecast[0]["id"]
+# print(first_forecast_code)
+
+# Use list comprehension to create a list of the forecast codes:
+# Using "" accesses the value from the key:value pair; using square brackets with a number accesses the
+# item in that position in the list.
+will_rain = False
+forecast_codes = [weather_data["list"][forecast_number]["weather"][0]["id"]
+                  for forecast_number in range(0,4)]
+
+for condition_code in forecast_codes:
+    if condition_code < 700:
+        will_rain = True # Change the boolean to True if any one of the codes indicates that it will rain.
+
+if will_rain: # This is a shortened version of if will_rain == True:
+    my_email = os.environ.get("FIRST_EMAIL")
+    my_other_email = os.environ.get("SECOND_EMAIL")
+    password = os.environ.get("APP_PASSWORD")
+
+    with smtplib.SMTP("smtp.gmail.com") as connection:  # Using the 'with' keyword ensures the connection
+        # is closed off automatically (after the email is sent).
+        connection.starttls()  # Encrypts the email/makes it secure.
+        connection.login(user=my_email, password=password)  # Login to my gmail account.
         connection.sendmail(
-            from_addr=MY_EMAIL,
-            to_addrs=birthday_person["email"],
-            msg=f"Subject:Happy Birthday!\n\n{contents}"
-        )
+            from_addr=my_email,
+            to_addrs=my_other_email,
+            msg="Subject:Weather Report\n\nIt's going to rain today. Bring an umbrella!")
+        connection.close()
