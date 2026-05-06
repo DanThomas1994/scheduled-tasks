@@ -41,7 +41,7 @@ for condition_code in forecast_codes:
         will_rain = True # Change the boolean to True if any one of the codes indicates that it will rain.
 
 if will_rain: # This is a shortened version of if will_rain == True:
-    my_email = os.environ.get("FIRST_EMAIL")
+    my_email = os.environ.get("MY_EMAIL")
     my_other_email = os.environ.get("SECOND_EMAIL")
     password = os.environ.get("APP_PASSWORD")
 
