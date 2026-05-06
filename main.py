@@ -3,7 +3,7 @@ import smtplib
 import os
 
 api_key = os.environ.get("API_KEY") # os.environ.get("API_KEY"). This is a way of hiding certain values.
-# "e6240e3967e6413e5541626830d3f3f3" # API key saved as a string.
+# API key saved as a string.
 open_weather_map_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
 
 # Latitude and longitude for Munich:
