@@ -7,7 +7,7 @@ api_key = os.environ.get("API_KEY") # os.environ.get("API_KEY"). This is a way o
 open_weather_map_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
 
 # Latitude and longitude for Munich:
-Latitude = 48.135124 # os.environ.get("LATITUDE") #This is a way of hiding certain values.
+Latitude = 48.135124
 Longitude = 11.581981
 
 weather_parameters = {
